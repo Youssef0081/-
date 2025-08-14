@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>رسالة خاصة – عرض كلمات ملونة مع موسيقى</title>
+    <meta name="description" content="رسالة تظهر كلمات بالترتيب مع تغير الألوان وموسيقى خلفية، صفحة أنيقة للتعبير عن المشاعر." />
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <style>
+      body{
+        margin:0;
+        font-family: 'Tajawal', sans-serif;
+        background: linear-gradient(135deg, #0f172a, #1f2937);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .container{
+        text-align: center;
+      }
+      .message{
+        font-size: 3rem;
+        font-weight: bold;
+        min-height: 3.5rem;
+        margin-bottom: 20px;
+      }
+      .word{
+        display: inline-block;
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+      }
+      @keyframes fadeIn{
+        to{
+          opacity: 1;
+        }
+      }
+      button{
+        background: rgba(255,255,255,0.1);
+        border: none;
+        padding: 10px 20px;
+        color: white;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover{
+        background: rgba(255,255,255,0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="message" class="message"></div>
+      <button id="replay">🔄 إعادة العرض</button>
+      <button id="pause">⏯️ إيقاف / استئناف</button>
+    </div>
+
+    <audio id="bgMusic" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_f6c92a1f1a.mp3?filename=romantic-music-110241.mp3" autoplay loop></audio>
+
+    <script>
+      const words = ["وربنا", "يمريم", "انا", "مخونتكش"];
+      const colors = ["#f97316", "#22c55e", "#3b82f6", "#eab308", "#ec4899", "#a855f7", "#06b6d4"];
+      const messageEl = document.getElementById('message');
+      const replayBtn = document.getElementById('replay');
+      const pauseBtn = document.getElementById('pause');
+      const music = document.getElementById('bgMusic');
+
+      let i = 0, colorIndex = 0, timer, paused = false, speed = 800;
+
+      function nextColor(){
+        return colors[colorIndex++ % colors.length];
+      }
+
+      function reset(){
+        i = 0;
+        colorIndex = 0;
+        messageEl.innerHTML = '';
+        clearTimeout(timer);
+      }
+
+      function appendWord(word){
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.style.color = nextColor();
+        span.textContent = (messageEl.textContent ? ' ' : '') + word;
+        messageEl.appendChild(span);
+      }
+
+      function step(){
+        if(paused) return;
+        if(i < words.length){
+          appendWord(words[i]);
+          i++;
+          timer = setTimeout(step, speed);
+        }
+      }
+
+      function play(){
+        paused = false;
+        step();
+      }
+
+      replayBtn.addEventListener('click', ()=>{ reset(); play(); });
+      pauseBtn.addEventListener('click', ()=>{
+        paused = !paused;
+        if(!paused) play();
+      });
+
+      play();
+    </script>
+  </body>
+</html>
